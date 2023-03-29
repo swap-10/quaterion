@@ -19,12 +19,13 @@ Dataloaders
 Datasets
 ++++++++
 
-.. py:currentmodule:: quaterion.dataset.similarity_dataset
+.. py:currentmodule:: quaterion.dataset
 
 .. autosummary::
     :nosignatures:
 
-    SimilarityGroupDataset
+    ~similarity_dataset.SimilarityGroupDataset
+    ~hf_similarity_dataset.HFSimilarityGroupDataset
 
 Samples
 +++++++
