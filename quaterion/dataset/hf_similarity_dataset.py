@@ -46,6 +46,9 @@ class HFSimilarityGroupDataset(SimilarityGroupDataset):
         self.record_attr = record_attr
         self.label_attr = label_attr
 
+    def subset(self, slice_begin: int, slice_end: int):
+        self._dataset = self._dataset.select(range(slice_begin, slice_end))
+
     def __getitem__(self, index:Union[int, str]) -> SimilarityGroupSample:
         if isinstance(self._dataset, hfds.IterableDataset):
             raise NotImplementedError
@@ -64,13 +67,15 @@ class HFSimilarityGroupDataset(SimilarityGroupDataset):
         return SimilarityGroupSample(obj=record, group=label)
     
     def __iter__(self):
-        if self.iterable_dataset == True:
-            if self.record_attr == None and self.label_attr == None:
-                yield from iter(self._dataset)
-            else:
-                raise NotImplementedError
-                # obj = next(iter(self._dataset))
-                # yield obj[self.record_attr], obj[self.label_attr]
-
+        if self.record_attr == None and self.label_attr == None:
+            self._source_iterator = iter(self._dataset)
         else:
             raise NotImplementedError
+        return self
+    def __next__(self):
+        try:
+            item = next(self._source_iterator)
+            record, label = item.values()
+        except StopIteration:
+            raise StopIteration
+        return SimilarityGroupSample(obj=record, group=label)
